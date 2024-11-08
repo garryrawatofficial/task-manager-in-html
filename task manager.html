@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Task Manager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f2f2f2;
+        }
+
+        .task-manager {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .task-list {
+            margin-top: 20px;
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .task-item button {
+            background-color: #ff4040;
+        }
+
+        .task-item button:hover {
+            background-color: #ff1f1f;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="task-manager">
+        <h1>Task Manager</h1>
+        <input type="text" id="taskInput" placeholder="Enter a new task...">
+        <button id="addTaskButton">Add Task</button>
+
+        <ul id="taskList" class="task-list">
+            <!-- Task items will be displayed here -->
+        </ul>
+    </div>
+
+    <script>
+        // Check if there's existing task data in localStorage
+        if (!localStorage.getItem("tasks")) {
+            localStorage.setItem("tasks", JSON.stringify([])); // Initialize empty task list
+        }
+
+        const taskInput = document.getElementById('taskInput');
+        const addTaskButton = document.getElementById('addTaskButton');
+        const taskList = document.getElementById('taskList');
+
+        // Load tasks from localStorage and display them
+        function loadTasks() {
+            const tasks = JSON.parse(localStorage.getItem('tasks'));
+            taskList.innerHTML = ''; // Clear existing tasks
+            tasks.forEach((task, index) => {
+                const taskItem = document.createElement('li');
+                taskItem.classList.add('task-item');
+                taskItem.innerHTML = `
+                    ${task}
+                    <button onclick="deleteTask(${index})">Delete</button>
+                `;
+                taskList.appendChild(taskItem);
+            });
+        }
+
+        // Add a new task
+        addTaskButton.addEventListener('click', () => {
+            const taskText = taskInput.value.trim();
+            if (taskText) {
+                const tasks = JSON.parse(localStorage.getItem('tasks'));
+                tasks.push(taskText);
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+                taskInput.value = ''; // Clear the input field
+                loadTasks(); // Reload the tasks
+            } else {
+                alert("Please enter a task.");
+            }
+        });
+
+        // Delete a task
+        function deleteTask(index) {
+            const tasks = JSON.parse(localStorage.getItem('tasks'));
+            tasks.splice(index, 1);
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            loadTasks(); // Reload the tasks
+        }
+
+        // Initial load of tasks
+        loadTasks();
+    </script>
+
+</body>
+</html>
